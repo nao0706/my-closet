@@ -8,11 +8,11 @@ let dbdata = {};
 
 /**
  * -------------------
- * 書籍一覧画面関連の関数
+ * 服一覧画面関連の関数
  * -------------------
  */
 
-// 書籍の表紙画像をダウンロードする
+// 服の表紙画像をダウンロードする
 const downloadClothImage = clothImageLocation => firebase
   .storage()
   .ref(clothImageLocation)
@@ -21,16 +21,16 @@ const downloadClothImage = clothImageLocation => firebase
     console.error('写真のダウンロードに失敗:', error);
   });
 
-// 書籍の表紙画像を表示する
+// 服の表紙画像を表示する
 const displayClothImage = ($divTag, url) => {
   $divTag.find('.cloth-item__image').attr({
     src: url,
   });
 };
 
-// Realtime Database の clothes から書籍を削除する
+// Realtime Database の clothes から服を削除する
 const deleteCloth = (clothId) => {
-  // TODO: clothes から該当の書籍データを削除
+  // TODO: clothes から該当の服データを削除
   firebase
     .database()
     .ref(`Clothes/${currentUID}/Bags`)
@@ -38,15 +38,15 @@ const deleteCloth = (clothId) => {
     .remove();
 };
 
-// 書籍の表示用のdiv（jQueryオブジェクト）を作って返す
+// 服の表示用のdiv（jQueryオブジェクト）を作って返す
 const createClothDiv = (clothId, clothData) => {
   // HTML内のテンプレートからコピーを作成する
   const $divTag = $('#cloth-template > .cloth-item').clone();
 
-  // 書籍タイトルを表示する
+  // 服タイトルを表示する
   $divTag.find('.cloth-item__title').text(clothData.clothTitle);
 
-  // 書籍の表紙画像をダウンロードして表示する
+  // 服の表紙画像をダウンロードして表示する
   downloadClothImage(clothData.clothImageLocation).then((url) => {
     displayClothImage($divTag, url);
   });
@@ -63,23 +63,23 @@ const createClothDiv = (clothId, clothData) => {
   return $divTag;
 };
 
-// 書籍一覧画面内の書籍データをクリア
+// 服一覧画面内の服データをクリア
 const resetClosetView = () => {
   $('#cloth-list').empty();
 };
 
-// 書籍一覧画面に書籍データを表示する
+// 服一覧画面に服データを表示する
 const addCloth = (clothId, clothData) => {
   const $divTag = createClothDiv(clothId, clothData);
   $divTag.appendTo('#cloth-list');
   console.log('服を追加しました');
 };
 
-// 書籍一覧画面の初期化、イベントハンドラ登録処理
+// 服一覧画面の初期化、イベントハンドラ登録処理
 const loadClosetView = () => {
   resetClosetView();
 
-  // 書籍データを取得
+  // 服データを取得
   const clothesRef = firebase
     .database()
     .ref(`Clothes/${currentUID}/Bags`)
@@ -90,23 +90,23 @@ const loadClosetView = () => {
   clothesRef.off('child_added');
 
   // clothes の child_removedイベントハンドラを登録
-  // （データベースから書籍が削除されたときの処理）
+  // （データベースから服が削除されたときの処理）
   clothesRef.on('child_removed', (clothSnapshot) => {
     const clothId = clothSnapshot.key;
     const $cloth = $(`#cloth-id-${clothId}`);
 
-    // TODO: 書籍一覧画面から該当の書籍データを削除する
+    // TODO: 服一覧画面から該当の服データを削除する
     $cloth.remove();
 
   });
 
   // clothes の child_addedイベントハンドラを登録
-  // （データベースに書籍が追加保存されたときの処理）
+  // （データベースに服が追加保存されたときの処理）
   clothesRef.on('child_added', (clothSnapshot) => {
     const clothId = clothSnapshot.key;
     const clothData = clothSnapshot.val();
 
-    // 書籍一覧画面に書籍データを表示する
+    // 服一覧画面に服データを表示する
     addCloth(clothId, clothData);
   });
 };
@@ -139,7 +139,7 @@ const onLogin = () => {
   console.log('ログイン完了');
   
 
-  // 書籍一覧画面を表示
+  // 服一覧画面を表示
   showView('closet');
 };
 
@@ -206,11 +206,11 @@ $('.logout-button').on('click', (e) => {
 
 /**
  * -------------------------
- * 書籍情報追加モーダル関連の処理
+ * 服情報追加モーダル関連の処理
  * -------------------------
  */
 
-// 書籍の登録モーダルを初期状態に戻す
+// 服の登録モーダルを初期状態に戻す
 const resetAddClothModal = () => {
   $('#cloth-form')[0].reset();
   $('#add-cloth-image-label').text('');
@@ -232,16 +232,16 @@ $('#add-cloth-image').on('change', (e) => {
   }
 });
 
-// 書籍の登録処理
+// 服の登録処理
 $('#cloth-form').on('submit', (e) => {
   e.preventDefault();
 
-  // 書籍の登録ボタンを押せないようにする
+  // 服の登録ボタンを押せないようにする
   $('#submit_add_cloth')
     .prop('disabled', true)
     .text('送信中…');
 
-  // 書籍タイトル
+  // 服タイトル
   const clothName = $('#add-cloth-title').val();
 
   const $clothImage = $('#add-cloth-image');
@@ -256,13 +256,13 @@ $('#cloth-form').on('submit', (e) => {
   const filename = file.name; // 画像ファイル名
   const clothImageLocation = `bags-images/${currentUID}/${filename}`; // 画像ファイルのアップロード先
 
-  // 書籍データを保存する
+  // 服データを保存する
   firebase
     .storage()
     .ref(clothImageLocation)
     .put(file) // Storageへファイルアップロードを実行
     .then(() => {
-      // Storageへのアップロードに成功したら、Realtime Databaseに書籍データを保存する
+      // Storageへのアップロードに成功したら、Realtime Databaseに服データを保存する
       const clothData = {
         clothName,
         clothImageLocation,
@@ -274,7 +274,7 @@ $('#cloth-form').on('submit', (e) => {
         .push(clothData);
     })
     .then(() => {
-      // 書籍一覧画面の書籍の登録モーダルを閉じて、初期状態に戻す
+      // 服一覧画面の服の登録モーダルを閉じて、初期状態に戻す
       $('#add-cloth-modal').modal('hide');
       resetAddClothModal();
     })
