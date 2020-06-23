@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,
+user-scalable=yes,initial-scale=1.0">
+  <title>MY Closet</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+  <!-- 自サイトのCSS -->
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body>
+  <!-- 最初のローディング表示 -->
+  <section id="loading" class="view">
+    <i class="initial-loading-icon fas fa-sync" aria-hidden="true"></i>
+  </section>
+  <!-- /#loading -->
+
+
+
+   <!-- 書籍一覧画面 -->
+  <section id="closet" class="view">
+    
+      <header>
+        <div id="header">
+          <div id="logo">
+            <p class="mycloset-logo">My Closet</p>
+            <!--<a href="./index.html"><img src="./images/logo.png" alt="Mycloset"></a>-->
+          </div>
+          <a href="#add-cloth-modal" data-toggle="modal" class="add-button">
+            <i class="fas fa-plus-circle" aria-hidden="true"></i>
+            Comonoの登録
+          </a>
+          <button class="btn btn-primary logout-button">
+            ログアウト
+          </button>
+        </div>
+      </header>
+      <div id="cover">
+        <h1 id="cover__title">Comono</h1>
+      </div>
+      
+      
+           <nav class="globalnav">
+      <div class="container">
+        <div class="row">
+          <ul class="globalnav-list">
+            <li><a href="../index.html">MyCode</a></li>
+            <li><a href="../outer/outer.html">Outer</a></li>
+            <li><a href="../tops/tops.html">Tops</a></li>
+            <li><a href="../pants/pants.html">Pants</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+      
+      <nav class="globalnav2">
+        <div class="container">
+          <div class="row">
+            <ul class="globalnav-list2">
+              <li><a href="../shoes/shoes.html">Shoes</a></li>
+              <li><a href="../bags/bags.html">Bags</a></li>
+              <li><a href="comono.html">Comono</a></li>
+              <li><a href="../others/others.html">Others</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
+      
+      
+      
+      
+      <div class="wrapper">
+        <div id="main">
+          <div class="container">
+            <div class="row">
+              <div id="cloth-list" class="clearfix"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+   
+  </section>
+  <!-- /#mycloset -->
+
+  <div id="cloth-template">
+    <!-- 書籍のテンプレート -->
+
+        <div class="cloth-item ">
+          <div class="cloth-item__image-wrapper">
+            <img class="cloth-item__image" alt="">
+          </div>
+          <div class="cloth-item__detail">
+            <div class="cloth-item__title"></div>
+            <div class="cloth-item__delete-wrapper">
+              <button class="btn btn-danger cloth-item__delete">
+                <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                削除
+              </button>
+            </div>
+          </div>
+       </div>
+      
+    
+    <!-- /.cloth-item -->
+  </div>
+
+  <!-- 書籍情報追加モーダル -->
+  <div id="add-cloth-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Comonoの登録</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body m-1">
+          <form id="cloth-form">
+            <div class="form-group row">
+              <label for="add-cloth-title" class="col-md-3  col-form-label">タイトル</label>
+              <div class="col-md-9">
+                <input id="add-cloth-title" type="text" class="form-control" required>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-md-3">表紙画像</div>
+              <div class="col-md-9">
+                <div class="custom-file">
+                  <input id="add-cloth-image" type="file" accept=".jpg,.jpeg,.png,.gif, image/jpeg,image/png,image/gif"
+                    class="custom-file-input" required>
+                  <label id="add-cloth-image-label" class="custom-file-label" for="add-cloth-image">ファイルを選択</label>
+                </div>
+              </div>
+            </div>
+            <div id="add-cloth__help" class="alert alert-danger"></div>
+            <button id="submit_add_cloth" type="submit" class="btn btn-default btn-success btn-block">
+              保存する
+            </button>
+        </div>
+        </form>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+  </div>
+  <!-- /#add-book-modal -->
+
+  <!-- Firebaseのセットアップコード（下記のSDKのバージョンは6.2.0） -->
+  <!-- The core Firebase JS SDK is always required and must be listed first 
+    (中心となるFirebase SDKです。常に必要で、最初に記述する必要があります) -->
+  <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
+
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+         https://firebase.google.com/docs/web/setup#config-web-app
+        (使いたいFirebaseサービス用のSDKを加えます) -->
+  <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-storage.js"></script>
+
+  <!-- apiKeyなどは、ご自身の環境のものに合わせてください -->
+  <script>
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDQkUjLfG4g3hjWPcdoTgNujEjXuvgtZko",
+  authDomain: "my-closet-c51de.firebaseapp.com",
+  databaseURL: "https://my-closet-c51de.firebaseio.com",
+  projectId: "my-closet-c51de",
+  storageBucket: "my-closet-c51de.appspot.com",
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);  
+  </script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+  <!-- Popper.js, 次に Bootstrap JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+  <script src="../js/comono.js"></script>
+
+  <!-- Font Awesome -->
+  <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"></script>
+</body>
+
+</html>
